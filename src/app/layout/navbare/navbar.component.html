@@ -1,0 +1,38 @@
+﻿<header class="navbar">
+  <!-- <a class="logo" href="#home" (click)="closeMenu()" aria-label="Home">
+    {{ logoName }}
+  </a> -->
+
+  <nav class="nav-links" [class.open]="isMenuOpen" aria-label="Primary navigation">
+    <a  [routerLink]="['/']"(click)="closeMenu()">{{ t('NAV.HOME') }}</a>
+    <a  [routerLink]="['/#services']" (click)="closeMenu()">{{ t('NAV.SERVICES') }}</a>
+    <a  [routerLink]="['/projects']" (click)="closeMenu()">{{ t('NAV.PROJECTS') }}</a>
+    <a  [routerLink]="['/contact']" (click)="closeMenu()">{{ t('NAV.CONTACT') }}</a>
+  </nav>
+
+  <div class="actions">
+    <div class="lang-switch" aria-label="Language switcher">
+      <button
+        type="button"
+        *ngFor="let language of languages"
+        (click)="setLang(language)"
+        [class.active]="lang === language"
+        [attr.aria-pressed]="lang === language"
+      >
+        {{ language.toUpperCase() }}
+      </button>
+    </div>
+
+    <button
+      class="hamburger"
+      type="button"
+      (click)="toggleMenu()"
+      [attr.aria-expanded]="isMenuOpen"
+      aria-label="Toggle navigation"
+    >
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+  </div>
+</header>

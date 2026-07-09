@@ -1,0 +1,101 @@
+﻿<!-- GLOBAL LOADER -->
+<div class="global-loader" *ngIf="!isReady">
+  <div class="spinner"></div>
+  <p>Loading...</p>
+</div>
+
+
+<div class="home" *ngIf="isReady">
+  <section class="hero section-shell">
+    <div class="hero-content">
+
+<p class="eyebrow">
+  {{ siteSettings.role }}
+</p>
+
+<h1>
+  {{ siteSettings.full_name}}
+</h1>
+
+<p class="hero-copy">
+  {{ siteSettings.bio_short}}
+</p>
+
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" [routerLink]="['/contact']">
+          {{ translate.translate('HOME.CTA_CONTACT') }}
+        </a>
+        <a class="btn btn-secondary"  [routerLink]="['/projects']">
+          {{ translate.translate('HOME.CTA_PROJECTS') }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-shell section-block" id="services">
+    <div class="section-heading">
+      <span>{{ translate.translate('HOME.SERVICES_TITLE') }}</span>
+      <h2>{{ translate.translate('HOME.SERVICES_SUBTITLE') }}</h2>
+    </div>
+
+    <div class="services-grid" *ngIf="services.length; else emptyServices">
+      <article class="portfolio-card service-card" *ngFor="let service of services">
+       <div class="service-icon">
+<lucide-icon   *ngIf="icons[service.icon]" [img]="icons[service.icon]"></lucide-icon>
+</div>
+       <h3>{{ service.title}}</h3>
+
+<p>{{ service.description}}</p>
+      </article>
+    </div>
+
+    <ng-template #emptyServices>
+      <p class="empty-state">{{ translate.translate('HOME.EMPTY_SERVICES') }}</p>
+    </ng-template>
+  </section>
+
+ <div class="projects-section">
+
+  <div class="section-header">
+    <h2>{{ translate.translate('PROJECTS.TITLE') }}</h2>
+
+    <a routerLink="/projects" class="view-all-btn">
+      {{ translate.translate('PROJECTS.VIEW_ALL') }}
+    </a>
+  </div>
+
+  <div class="projects-grid" *ngIf="projects.length; else emptyProjects">
+
+    <article class="portfolio-card project-card"
+             *ngFor="let project of projects">
+
+      <h3>{{ project.title }}</h3>
+
+      <p>{{ project.description }}</p>
+<button class="details-btn" [routerLink]="['/projects', project.id]">
+  {{ translate.translate('COMMON.DETAILS') }}
+  <span class="arrow">→</span>
+</button>
+
+    </article>
+
+  </div>
+
+</div>
+
+<ng-template #emptyProjects>
+  <p>Aucun projet disponible</p>
+</ng-template>
+  <section class="contact-cta section-shell" id="contact">
+    <div>
+      <span>{{ translate.translate('NAV.CONTACT') }}</span>
+      <h2>{{ translate.translate('HOME.CTA_TITLE') }}</h2>
+      <p>{{ translate.translate('HOME.CTA_TEXT') }}</p>
+    </div>
+
+    <a class="btn btn-light" [routerLink]="['/contact']">
+      {{ translate.translate('HOME.CTA_CONTACT') }}
+    </a>
+  </section>
+</div>

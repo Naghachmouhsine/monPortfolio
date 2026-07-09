@@ -1,0 +1,155 @@
+<section class="contact-section">
+
+  <div class="container">
+
+    <div class="section-header">
+      <span class="badge">{{ translate.translate('contact.badge') }}</span>
+
+      <h2>{{ translate.translate('contact.title') }}</h2>
+
+      <p>
+        {{ translate.translate('contact.subtitle') }}
+      </p>
+    </div>
+
+    <div class="contact-wrapper">
+
+      <!-- Left -->
+
+      <div class="contact-info">
+
+        <div class="info-card">
+          <i class="bx bx-time"></i>
+
+          <div>
+            <h4>{{ translate.translate('contact.features.response.title') }}</h4>
+            <p>{{ translate.translate('contact.features.response.description') }}</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <i class="bx bx-check-shield"></i>
+
+          <div>
+            <h4>{{ translate.translate('contact.features.quote.title') }}</h4>
+            <p>{{ translate.translate('contact.features.quote.description') }}</p>
+          </div>
+        </div>
+
+        <div class="info-card">
+          <i class="bx bx-world"></i>
+
+          <div>
+            <h4>{{ translate.translate('contact.features.remote.title') }}</h4>
+            <p>{{ translate.translate('contact.features.remote.description') }}</p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Form -->
+
+      <form
+        class="contact-form"
+        [formGroup]="contactForm"
+        (ngSubmit)="submit()">
+
+        <div class="grid">
+
+          <div class="form-group">
+
+            <label>{{ translate.translate('contact.form.fullName') }}</label>
+
+            <input
+              type="text"
+              formControlName="full_name"
+              [placeholder]="translate.translate('contact.placeholders.fullName')">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>{{ translate.translate('contact.form.email') }}</label>
+
+            <input
+              type="email"
+              formControlName="email"
+              [placeholder]="translate.translate('contact.placeholders.email')">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>{{ translate.translate('contact.form.phone') }}</label>
+
+            <input
+              type="text"
+              formControlName="phone"
+              [placeholder]="translate.translate('contact.placeholders.phone')">
+
+          </div>
+
+          <div class="form-group">
+
+            <label>{{ translate.translate('contact.form.service') }}</label>
+
+            <select formControlName="service_interest">
+
+              <option value="">
+                {{ translate.translate('contact.placeholders.service') }}
+              </option>
+
+              <option
+                *ngFor="let service of services"
+                [value]="service.title">
+
+                {{ service.title }}
+
+              </option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+        <div class="form-group">
+
+          <label>{{ translate.translate('contact.form.subject') }}</label>
+
+          <input
+            type="text"
+            formControlName="subject"
+            [placeholder]="translate.translate('contact.placeholders.subject')">
+
+        </div>
+
+        <div class="form-group">
+
+          <label>{{ translate.translate('contact.form.message') }}</label>
+
+          <textarea
+            rows="6"
+            formControlName="message"
+            [placeholder]="translate.translate('contact.placeholders.message')">
+          </textarea>
+
+        </div>
+
+        <button
+          class="submit-btn"
+          [disabled]="loading">
+
+          <i class="bx bx-send"></i>
+
+          {{ loading ? translate.translate('contact.sending') : translate.translate('contact.send') }}
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </div>
+
+</section>

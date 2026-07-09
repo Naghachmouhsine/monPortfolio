@@ -1,0 +1,86 @@
+<!-- LOADER SKELETON -->
+<div class="projects-skeleton" *ngIf="isLoading">
+  <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+</div>
+
+<!-- PAGE -->
+<div class="projects-page" *ngIf="!isLoading">
+
+  <div class="section-shell">
+
+    <div class="page-header">
+      <h1>{{ translate.translate('PROJECTS.TITLE') }}</h1>
+    </div>
+
+    <div class="projects-grid">
+
+      <article class="project-card"
+               *ngFor="let project of projects"
+               (click)="openProject(project)">
+
+        <!-- IMAGE CAROUSEL -->
+        <div class="project-image">
+
+         <div class="img-wrapper">
+    <img
+      [src]="getActiveImage(project)"
+      [class.mobile]="isMobileImage(getActiveImage(project))"
+      [class.desktop]="!isMobileImage(getActiveImage(project))"
+      alt="project image"
+    />
+  </div>
+
+          <!-- OVERLAY -->
+          <div class="overlay">
+            <span class="badge" *ngIf="project.featured">Featured</span>
+            <span class="img-count">{{ project.images.length }} imgs</span>
+          </div>
+
+          <!-- ARROWS -->
+          <button class="nav prev"
+                  (click)="prevImage(project, $event)">‹</button>
+
+          <button class="nav next"
+                  (click)="nextImage(project, $event)">›</button>
+
+          <!-- DOTS -->
+          <div class="dots">
+            <span *ngFor="let img of project.images; let i = index"
+                  [class.active]="i === project.activeIndex">
+            </span>
+          </div>
+
+        </div>
+
+        <!-- CONTENT -->
+        <div class="project-content">
+
+          <h2>{{ project.title }}</h2>
+
+          <p class="description">{{ project.description }}</p>
+
+          <div class="techs">
+            <span class="tech" *ngFor="let tech of project.technologies">
+              {{ tech.name }}
+            </span>
+          </div>
+
+          <button class="details-btn"
+                  [routerLink]="['/projects', project.id]"
+                  (click)="$event.stopPropagation()">
+            {{ translate.translate('COMMON.DETAILS') }}
+            <span class="arrow">→</span>
+          </button>
+
+        </div>
+
+      </article>
+
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
+  <img [src]="lightboxImage" />
+</div>
