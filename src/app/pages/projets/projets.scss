@@ -253,3 +253,10 @@ img.desktop {
 @media (max-width: 640px) {
   .projects-grid { grid-template-columns: 1fr; }
 }
+
+
+.private-btn {
+  cursor: default;
+  opacity: 0.7;
+  background: #555;
+}

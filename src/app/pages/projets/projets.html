@@ -65,12 +65,25 @@
             </span>
           </div>
 
-          <button class="details-btn"
-                  [routerLink]="['/projects', project.id]"
-                  (click)="$event.stopPropagation()">
-            {{ translate.translate('COMMON.DETAILS') }}
-            <span class="arrow">→</span>
-          </button>
+        <a *ngIf="project.github_url && project.github_url.trim() !== ''"
+   class="details-btn github-btn"
+   [href]="project.github_url"
+   target="_blank"
+   rel="noopener noreferrer"
+   (click)="$event.stopPropagation()">
+
+  GitHub
+  <span class="arrow">↗</span>
+
+</a>
+
+<span *ngIf="!project.github_url || project.github_url.trim() === ''"
+      class="details-btn private-btn"
+      (click)="$event.stopPropagation()">
+
+  🔒 {{ translate.translate('PRIVATE_PROJECT') }}
+
+</span>
 
         </div>
 

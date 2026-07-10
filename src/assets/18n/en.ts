@@ -93,9 +93,9 @@ export const EN_TRANSLATIONS = {
  success:"Your request has been sent successfully.",
  error:"An error occurred."
 
+  },
 
 
+    PRIVATE_PROJECT: "Private project"
 
-
-  }
 };

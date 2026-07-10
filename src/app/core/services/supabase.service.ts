@@ -68,6 +68,7 @@ async getAllProjects(): Promise<any[]> {
       title_i18n,
       description_i18n,
       featured,
+      github_url,
       project_images (
         image_url,
         is_main,

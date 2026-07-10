@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { Lang, TranslateService } from '../../core/services/translation.service';
 import { RouterLink } from "@angular/router";
@@ -19,7 +19,8 @@ export class NavbarComponent implements OnInit {
 
   constructor(
     private translateService: TranslateService,
-    private supabaseService: SupabaseService
+    private supabaseService: SupabaseService,
+     private cdr: ChangeDetectorRef
   ) {
     this.lang = this.translateService.getCurrentLang();
   }
@@ -41,6 +42,8 @@ export class NavbarComponent implements OnInit {
     this.lang = lang;
     this.translateService.setLanguage(lang);
     this.closeMenu();
+      this.cdr.detectChanges();
+
   }
 
   t(key: string): string {

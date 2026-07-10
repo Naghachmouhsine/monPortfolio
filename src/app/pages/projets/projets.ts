@@ -65,6 +65,8 @@ async loadProjects(): Promise<void> {
       id: p.id,
       featured: p.featured,
 
+      github_url : p.github_url,
+
       title: p.title_i18n?.[this.currentLang]
           || p.title_i18n?.en
           || p.title_i18n?.fr,

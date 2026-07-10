@@ -91,7 +91,11 @@ export const FR_TRANSLATIONS = {
        success:"Votre demande a été envoyée avec succès.",
  error:"Une erreur est survenue."
 
-  }
+  },
+
+
+    PRIVATE_PROJECT: "Projet privé"
+  
 
 
 };
