@@ -1,155 +1,158 @@
 <section class="contact-section">
-
-  <div class="container">
-
-    <div class="section-header">
-      <span class="badge">{{ translate.translate('contact.badge') }}</span>
-
-      <h2>{{ translate.translate('contact.title') }}</h2>
-
-      <p>
-        {{ translate.translate('contact.subtitle') }}
-      </p>
-    </div>
+  <div class="section-shell">
+    <header class="section-header page-header">
+      <span class="badge badge--soft">{{ translate.translate('contact.badge') }}</span>
+      <h1>{{ translate.translate('contact.title') }}</h1>
+      <p>{{ translate.translate('contact.subtitle') }}</p>
+    </header>
 
     <div class="contact-wrapper">
-
-      <!-- Left -->
-
       <div class="contact-info">
-
-        <div class="info-card">
-          <i class="bx bx-time"></i>
-
+        <article class="info-card portfolio-card">
+          <div class="info-card__icon" aria-hidden="true">
+            <lucide-icon [img]="icons.clock"></lucide-icon>
+          </div>
           <div>
-            <h4>{{ translate.translate('contact.features.response.title') }}</h4>
+            <h2 class="info-card__title">{{ translate.translate('contact.features.response.title') }}</h2>
             <p>{{ translate.translate('contact.features.response.description') }}</p>
           </div>
-        </div>
+        </article>
 
-        <div class="info-card">
-          <i class="bx bx-check-shield"></i>
-
+        <article class="info-card portfolio-card">
+          <div class="info-card__icon" aria-hidden="true">
+            <lucide-icon [img]="icons.shield"></lucide-icon>
+          </div>
           <div>
-            <h4>{{ translate.translate('contact.features.quote.title') }}</h4>
+            <h2 class="info-card__title">{{ translate.translate('contact.features.quote.title') }}</h2>
             <p>{{ translate.translate('contact.features.quote.description') }}</p>
           </div>
-        </div>
+        </article>
 
-        <div class="info-card">
-          <i class="bx bx-world"></i>
-
+        <article class="info-card portfolio-card">
+          <div class="info-card__icon" aria-hidden="true">
+            <lucide-icon [img]="icons.globe"></lucide-icon>
+          </div>
           <div>
-            <h4>{{ translate.translate('contact.features.remote.title') }}</h4>
+            <h2 class="info-card__title">{{ translate.translate('contact.features.remote.title') }}</h2>
             <p>{{ translate.translate('contact.features.remote.description') }}</p>
           </div>
-        </div>
-
+        </article>
       </div>
 
-      <!-- Form -->
+      <form class="contact-form portfolio-card" [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
+        @if (feedback) {
+          <div
+            class="feedback-banner"
+            [class.feedback-banner--success]="feedback.type === 'success'"
+            [class.feedback-banner--error]="feedback.type === 'error'"
+            role="alert"
+            aria-live="assertive"
+          >
+            <span>{{ feedback.message }}</span>
+            <button
+              type="button"
+              class="feedback-banner__close"
+              (click)="dismissFeedback()"
+              [attr.aria-label]="translate.translate('COMMON.CLOSE')"
+            >
+              ✕
+            </button>
+          </div>
+        }
 
-      <form
-        class="contact-form"
-        [formGroup]="contactForm"
-        (ngSubmit)="submit()">
-
-        <div class="grid">
-
+        <div class="form-grid">
           <div class="form-group">
-
-            <label>{{ translate.translate('contact.form.fullName') }}</label>
-
+            <label for="full_name">{{ translate.translate('contact.form.fullName') }}</label>
             <input
+              id="full_name"
               type="text"
               formControlName="full_name"
-              [placeholder]="translate.translate('contact.placeholders.fullName')">
-
+              [placeholder]="translate.translate('contact.placeholders.fullName')"
+              [attr.aria-invalid]="isInvalid('full_name')"
+              autocomplete="name"
+            />
+            @if (isInvalid('full_name')) {
+              <p class="field-error" id="full_name_error">{{ translate.translate('contact.errors.fullName') }}</p>
+            }
           </div>
 
           <div class="form-group">
-
-            <label>{{ translate.translate('contact.form.email') }}</label>
-
+            <label for="email">{{ translate.translate('contact.form.email') }}</label>
             <input
+              id="email"
               type="email"
               formControlName="email"
-              [placeholder]="translate.translate('contact.placeholders.email')">
-
+              [placeholder]="translate.translate('contact.placeholders.email')"
+              [attr.aria-invalid]="isInvalid('email')"
+              [attr.aria-describedby]="isInvalid('email') ? 'email_error' : null"
+              autocomplete="email"
+            />
+            @if (isInvalid('email')) {
+              <p class="field-error" id="email_error">{{ translate.translate('contact.errors.email') }}</p>
+            }
           </div>
 
           <div class="form-group">
-
-            <label>{{ translate.translate('contact.form.phone') }}</label>
-
+            <label for="phone">{{ translate.translate('contact.form.phone') }}</label>
             <input
-              type="text"
+              id="phone"
+              type="tel"
               formControlName="phone"
-              [placeholder]="translate.translate('contact.placeholders.phone')">
-
+              [placeholder]="translate.translate('contact.placeholders.phone')"
+              autocomplete="tel"
+            />
           </div>
 
           <div class="form-group">
-
-            <label>{{ translate.translate('contact.form.service') }}</label>
-
-            <select formControlName="service_interest">
-
-              <option value="">
-                {{ translate.translate('contact.placeholders.service') }}
-              </option>
-
-              <option
-                *ngFor="let service of services"
-                [value]="service.title">
-
-                {{ service.title }}
-
-              </option>
-
+            <label for="service_interest">{{ translate.translate('contact.form.service') }}</label>
+            <select
+              id="service_interest"
+              formControlName="service_interest"
+              [attr.aria-invalid]="isInvalid('service_interest')"
+              [attr.aria-describedby]="isInvalid('service_interest') ? 'service_error' : null"
+            >
+              <option value="">{{ translate.translate('contact.placeholders.service') }}</option>
+              @for (service of services; track service.title) {
+                <option [value]="service.title">{{ service.title }}</option>
+              }
             </select>
-
+            @if (isInvalid('service_interest')) {
+              <p class="field-error" id="service_error">{{ translate.translate('contact.errors.service') }}</p>
+            }
           </div>
-
         </div>
 
         <div class="form-group">
-
-          <label>{{ translate.translate('contact.form.subject') }}</label>
-
+          <label for="subject">{{ translate.translate('contact.form.subject') }}</label>
           <input
+            id="subject"
             type="text"
             formControlName="subject"
-            [placeholder]="translate.translate('contact.placeholders.subject')">
-
+            [placeholder]="translate.translate('contact.placeholders.subject')"
+            autocomplete="off"
+          />
         </div>
 
         <div class="form-group">
-
-          <label>{{ translate.translate('contact.form.message') }}</label>
-
+          <label for="message">{{ translate.translate('contact.form.message') }}</label>
           <textarea
+            id="message"
             rows="6"
             formControlName="message"
-            [placeholder]="translate.translate('contact.placeholders.message')">
-          </textarea>
-
+            [placeholder]="translate.translate('contact.placeholders.message')"
+            [attr.aria-invalid]="isInvalid('message')"
+            [attr.aria-describedby]="isInvalid('message') ? 'message_error' : null"
+          ></textarea>
+          @if (isInvalid('message')) {
+            <p class="field-error" id="message_error">{{ translate.translate('contact.errors.message') }}</p>
+          }
         </div>
 
-        <button
-          class="submit-btn"
-          [disabled]="loading">
-
-          <i class="bx bx-send"></i>
-
+        <button class="btn btn-primary btn-block submit-btn" type="submit" [disabled]="loading">
+          <lucide-icon [img]="icons.send" aria-hidden="true"></lucide-icon>
           {{ loading ? translate.translate('contact.sending') : translate.translate('contact.send') }}
-
         </button>
-
       </form>
-
     </div>
-
   </div>
-
 </section>

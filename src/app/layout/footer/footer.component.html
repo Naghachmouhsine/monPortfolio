@@ -1,0 +1,15 @@
+<footer class="site-footer">
+  <div class="section-shell site-footer__inner">
+    <p class="site-footer__copy">
+      © {{ year }} — {{ t('FOOTER.COPY') }}
+    </p>
+    <nav class="site-footer__nav" aria-label="Footer navigation">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        {{ t('NAV.HOME') }}
+      </a>
+      <a routerLink="/" fragment="services">{{ t('NAV.SERVICES') }}</a>
+      <a routerLink="/projects" routerLinkActive="active">{{ t('NAV.PROJECTS') }}</a>
+      <a routerLink="/contact" routerLinkActive="active">{{ t('NAV.CONTACT') }}</a>
+    </nav>
+  </div>
+</footer>

@@ -1,23 +1,72 @@
 ﻿<header class="navbar">
-  <!-- <a class="logo" href="#home" (click)="closeMenu()" aria-label="Home">
+  <a
+    class="logo"
+    routerLink="/"
+    (click)="closeMenu()"
+    [attr.aria-label]="t('NAV.HOME')"
+  >
     {{ logoName }}
-  </a> -->
+  </a>
 
-  <nav class="nav-links" [class.open]="isMenuOpen" aria-label="Primary navigation">
-    <a  [routerLink]="['/']"(click)="closeMenu()">{{ t('NAV.HOME') }}</a>
-    <a  [routerLink]="['/#services']" (click)="closeMenu()">{{ t('NAV.SERVICES') }}</a>
-    <a  [routerLink]="['/projects']" (click)="closeMenu()">{{ t('NAV.PROJECTS') }}</a>
-    <a  [routerLink]="['/contact']" (click)="closeMenu()">{{ t('NAV.CONTACT') }}</a>
+  @if (isMenuOpen) {
+    <button
+      type="button"
+      class="nav-backdrop"
+      (click)="closeMenu()"
+      [attr.aria-label]="t('COMMON.CLOSE')"
+    ></button>
+  }
+
+  <nav
+    #navPanel
+    class="nav-links"
+    id="primary-navigation"
+    [class.open]="isMenuOpen"
+    aria-label="Primary navigation"
+  >
+    <a
+      routerLink="/"
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: true }"
+      (click)="closeMenu()"
+      [attr.aria-current]="isActiveRoute('/', true) ? 'page' : null"
+    >
+      {{ t('NAV.HOME') }}
+    </a>
+    <a
+      routerLink="/"
+      fragment="services"
+      (click)="closeMenu()"
+    >
+      {{ t('NAV.SERVICES') }}
+    </a>
+    <a
+      routerLink="/projects"
+      routerLinkActive="active"
+      (click)="closeMenu()"
+      [attr.aria-current]="isActiveRoute('/projects') ? 'page' : null"
+    >
+      {{ t('NAV.PROJECTS') }}
+    </a>
+    <a
+      routerLink="/contact"
+      routerLinkActive="active"
+      (click)="closeMenu()"
+      [attr.aria-current]="isActiveRoute('/contact') ? 'page' : null"
+    >
+      {{ t('NAV.CONTACT') }}
+    </a>
   </nav>
 
   <div class="actions">
-    <div class="lang-switch" aria-label="Language switcher">
+    <div class="lang-switch" role="group" aria-label="Language switcher">
       <button
         type="button"
         *ngFor="let language of languages"
         (click)="setLang(language)"
         [class.active]="lang === language"
         [attr.aria-pressed]="lang === language"
+        [attr.lang]="language"
       >
         {{ language.toUpperCase() }}
       </button>
@@ -28,6 +77,7 @@
       type="button"
       (click)="toggleMenu()"
       [attr.aria-expanded]="isMenuOpen"
+      aria-controls="primary-navigation"
       aria-label="Toggle navigation"
     >
       <span></span>

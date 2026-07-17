@@ -1,99 +1,162 @@
-<!-- LOADER SKELETON -->
-<div class="projects-skeleton" *ngIf="isLoading">
-  <div class="skeleton-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
-</div>
-
-<!-- PAGE -->
-<div class="projects-page" *ngIf="!isLoading">
-
-  <div class="section-shell">
-
-    <div class="page-header">
-      <h1>{{ translate.translate('PROJECTS.TITLE') }}</h1>
+@if (isLoading) {
+  <div class="projects-skeleton section-shell" aria-busy="true" aria-live="polite">
+    <div class="skeleton-block projects-skeleton__header"></div>
+    <div class="skeleton-grid">
+      @for (i of [1, 2, 3, 4, 5, 6]; track i) {
+        <div class="skeleton-block projects-skeleton__card"></div>
+      }
     </div>
+    <p class="visually-hidden">{{ translate.translate('COMMON.LOADING') }}</p>
+  </div>
+}
 
-    <div class="projects-grid">
-
-      <article class="project-card"
-               *ngFor="let project of projects"
-               (click)="openProject(project)">
-
-        <!-- IMAGE CAROUSEL -->
-        <div class="project-image">
-
-         <div class="img-wrapper">
-    <img
-      [src]="getActiveImage(project)"
-      [class.mobile]="isMobileImage(getActiveImage(project))"
-      [class.desktop]="!isMobileImage(getActiveImage(project))"
-      alt="project image"
+@if (loadError && !isLoading) {
+  <div class="section-shell projects-state">
+    <app-empty-state
+      variant="error"
+      [title]="translate.translate('PROJECTS.ERROR_TITLE')"
+      [message]="translate.translate('PROJECTS.ERROR_MESSAGE')"
+      [actionLabel]="translate.translate('COMMON.RETRY')"
+      (action)="retryLoad()"
     />
   </div>
+}
 
-          <!-- OVERLAY -->
-          <div class="overlay">
-            <span class="badge" *ngIf="project.featured">Featured</span>
-            <span class="img-count">{{ project.images.length }} imgs</span>
-          </div>
+@if (!isLoading && !loadError) {
+  <div class="projects-page">
+    <div class="section-shell">
+      <header class="page-header">
+        <span class="badge badge--soft">{{ translate.translate('PROJECTS.TITLE') }}</span>
+        <h1>{{ translate.translate('PROJECTS.TITLE') }}</h1>
+      </header>
 
-          <!-- ARROWS -->
-          <button class="nav prev"
-                  (click)="prevImage(project, $event)">‹</button>
+      @if (projects.length) {
+        <div class="projects-grid">
+          @for (project of projects; track project.id) {
+            <article class="project-card portfolio-card" (click)="openProject(project)">
+              <div class="project-image">
+                <button
+                  type="button"
+                  class="project-image__trigger"
+                  (click)="openLightbox(project, $event)"
+                  [attr.aria-label]="translate.translate('PROJECTS.LIGHTBOX_LABEL') + ': ' + project.title"
+                >
+                  <div class="img-wrapper">
+                    <img
+                      [src]="getActiveImage(project)"
+                      [class.mobile]="isMobileImage(getActiveImage(project))"
+                      [class.desktop]="!isMobileImage(getActiveImage(project))"
+                      [alt]="getImageAlt(project)"
+                    />
+                  </div>
+                </button>
 
-          <button class="nav next"
-                  (click)="nextImage(project, $event)">›</button>
+                <div class="overlay" aria-hidden="true">
+                  @if (project.featured) {
+                    <span class="badge badge--solid">{{ translate.translate('PROJECTS.FEATURED') }}</span>
+                  }
+                  <span class="img-count">
+                    {{ project.images.length }} {{ translate.translate('PROJECTS.IMAGES') }}
+                  </span>
+                </div>
 
-          <!-- DOTS -->
-          <div class="dots">
-            <span *ngFor="let img of project.images; let i = index"
-                  [class.active]="i === project.activeIndex">
-            </span>
-          </div>
+                @if (project.images.length > 1) {
+                  <button
+                    type="button"
+                    class="nav prev"
+                    (click)="prevImage(project, $event)"
+                    [attr.aria-label]="translate.translate('COMMON.PREVIOUS')"
+                  >
+                    ‹
+                  </button>
 
+                  <button
+                    type="button"
+                    class="nav next"
+                    (click)="nextImage(project, $event)"
+                    [attr.aria-label]="translate.translate('COMMON.NEXT')"
+                  >
+                    ›
+                  </button>
+
+                  <div class="dots" role="tablist" [attr.aria-label]="project.title">
+                    @for (img of project.images; track $index; let i = $index) {
+                      <button
+                        type="button"
+                        role="tab"
+                        class="dot"
+                        [class.active]="i === project.activeIndex"
+                        [attr.aria-selected]="i === project.activeIndex"
+                        [attr.aria-label]="(i + 1) + ' / ' + project.images.length"
+                        (click)="goToImage(project, i, $event)"
+                      ></button>
+                    }
+                  </div>
+                }
+              </div>
+
+              <div class="project-content">
+                <h2>{{ project.title }}</h2>
+                <p class="description">{{ project.description }}</p>
+
+                <div class="techs">
+                  @for (tech of project.technologies; track tech.name) {
+                    <span class="tech">{{ tech.name }}</span>
+                  }
+                </div>
+
+                @if (project.github_url && project.github_url.trim() !== '') {
+                  <a
+                    class="btn btn-primary btn-block github-btn"
+                    [href]="project.github_url"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    (click)="$event.stopPropagation()"
+                  >
+                    {{ translate.translate('COMMON.GITHUB') }}
+                    <span class="arrow" aria-hidden="true">↗</span>
+                  </a>
+                } @else {
+                  <span class="btn btn-ghost btn-block private-btn" (click)="$event.stopPropagation()">
+                    {{ translate.translate('PRIVATE_PROJECT') }}
+                  </span>
+                }
+              </div>
+            </article>
+          }
         </div>
-
-        <!-- CONTENT -->
-        <div class="project-content">
-
-          <h2>{{ project.title }}</h2>
-
-          <p class="description">{{ project.description }}</p>
-
-          <div class="techs">
-            <span class="tech" *ngFor="let tech of project.technologies">
-              {{ tech.name }}
-            </span>
-          </div>
-
-        <a *ngIf="project.github_url && project.github_url.trim() !== ''"
-   class="details-btn github-btn"
-   [href]="project.github_url"
-   target="_blank"
-   rel="noopener noreferrer"
-   (click)="$event.stopPropagation()">
-
-  GitHub
-  <span class="arrow">↗</span>
-
-</a>
-
-<span *ngIf="!project.github_url || project.github_url.trim() === ''"
-      class="details-btn private-btn"
-      (click)="$event.stopPropagation()">
-
-  🔒 {{ translate.translate('PRIVATE_PROJECT') }}
-
-</span>
-
-        </div>
-
-      </article>
-
+      } @else {
+        <app-empty-state
+          [title]="translate.translate('PROJECTS.EMPTY_TITLE')"
+          [message]="translate.translate('PROJECTS.EMPTY_MESSAGE')"
+        />
+      }
     </div>
   </div>
-</div>
+}
 
-<!-- LIGHTBOX -->
-<div class="lightbox" *ngIf="lightboxOpen" (click)="closeLightbox()">
-  <img [src]="lightboxImage" />
-</div>
+@if (lightboxOpen) {
+  <div
+    class="lightbox"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-label]="translate.translate('PROJECTS.LIGHTBOX_LABEL')"
+    (click)="closeLightbox()"
+  >
+    <button
+      #lightboxCloseBtn
+      type="button"
+      class="lightbox__close"
+      (click)="closeLightbox(); $event.stopPropagation()"
+      [attr.aria-label]="translate.translate('COMMON.CLOSE')"
+    >
+      ✕
+    </button>
+    <img
+      class="lightbox__image"
+      [src]="lightboxImage"
+      [alt]="lightboxAlt"
+      (click)="$event.stopPropagation()"
+    />
+  </div>
+}

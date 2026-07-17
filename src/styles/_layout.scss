@@ -1,0 +1,49 @@
+.section-shell {
+  width: min(var(--content-max), calc(100% - var(--space-6)));
+  margin-inline: auto;
+}
+
+.section-heading,
+.page-header {
+  max-width: 720px;
+  margin-bottom: var(--space-6);
+
+  .eyebrow,
+  .badge {
+    display: inline-block;
+    margin-bottom: var(--space-3);
+  }
+
+  h1,
+  h2 {
+    margin: var(--space-2) 0 0;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1.15;
+    color: var(--color-text-primary);
+  }
+
+  p {
+    margin-top: var(--space-3);
+    color: var(--color-text-secondary);
+    line-height: 1.7;
+  }
+}
+
+.page-header {
+  margin-bottom: var(--space-7);
+}
+
+.section-heading span,
+.section-heading .eyebrow {
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+@include sm {
+  .section-shell {
+    width: min(var(--content-max), calc(100% - var(--space-5)));
+  }
+}

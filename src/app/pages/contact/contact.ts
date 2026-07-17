@@ -1,127 +1,109 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import {
-  FormBuilder,
-  ReactiveFormsModule,
-  Validators
-} from '@angular/forms';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { SupabaseService } from '../../core/services/supabase.service';
 import { Lang, TranslateService } from '../../core/services/translation.service';
 import { CommonModule } from '@angular/common';
+import { LucideAngularModule, Clock, ShieldCheck, Globe, Send } from 'lucide-angular';
 
 @Component({
   selector: 'app-contact',
-  imports: [ReactiveFormsModule,CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, LucideAngularModule],
   templateUrl: './contact.html',
-  styleUrl: './contact.scss',
+  styleUrl: './contact.scss'
 })
 export class ContactComponent implements OnInit {
-
   loading = false;
+  feedback: { type: 'success' | 'error'; message: string } | null = null;
 
   services: any[] = [];
-servicesRaw : any[] = [];
-  contactForm : any;
+  servicesRaw: any[] = [];
+  contactForm: any;
   currentLang: Lang = 'ar';
+
+  readonly icons = {
+    clock: Clock,
+    shield: ShieldCheck,
+    globe: Globe,
+    send: Send
+  };
 
   constructor(
     private fb: FormBuilder,
     private supabase: SupabaseService,
-        public translate: TranslateService,
-            private cdr: ChangeDetectorRef
-
-
+    public translate: TranslateService,
+    private cdr: ChangeDetectorRef
   ) {
-
-      this.translate.lang$.subscribe(lang => {
+    this.translate.lang$.subscribe((lang) => {
       this.currentLang = lang;
-      this.reloadTranslations(); // 🔥 important
+      this.reloadTranslations();
     });
-
   }
 
-
-  initForm(){
+  initForm() {
     this.contactForm = this.fb.group({
-
-    full_name: ['', Validators.required],
-
-    email: ['', [Validators.required, Validators.email]],
-
-    phone: [''],
-
-    service_interest: ['', Validators.required],
-
-    subject: [''],
-
-    message: ['', Validators.required]
-
-  });
+      full_name: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      phone: [''],
+      service_interest: ['', Validators.required],
+      subject: [''],
+      message: ['', Validators.required]
+    });
   }
 
+  async ngOnInit() {
+    this.initForm();
+    await this.loadServices();
+  }
 
- async ngOnInit() {
+  async loadServices() {
+    this.servicesRaw = await this.supabase.getServices();
+    this.reloadTranslations();
+  }
 
-  this.initForm();
-
-  await this.loadServices();
-
-}
-
- async loadServices() {
-
-  this.servicesRaw = await this.supabase.getServices();
-
-  this.reloadTranslations();
-
-}
-
-
-    private reloadTranslations(): void {
-
-
-    this.services = this.servicesRaw.map(s => ({
+  private reloadTranslations() {
+    this.services = this.servicesRaw.map((s) => ({
       title: s.title_i18n?.[this.currentLang]
     }));
 
-          this.cdr.markForCheck();
+    this.cdr.markForCheck();
+  }
 
+  isInvalid(controlName: string): boolean {
+    const control = this.contactForm.get(controlName);
+    return !!control && control.invalid && control.touched;
+  }
 
-    console.log(this.services);
-
-
+  dismissFeedback(): void {
+    this.feedback = null;
   }
 
   async submit() {
+    this.feedback = null;
 
     if (this.contactForm.invalid) {
-
       this.contactForm.markAllAsTouched();
-
       return;
-
     }
 
     this.loading = true;
 
-    const ok = await this.supabase.createContact(
-      this.contactForm.value
-    );
+    const ok = await this.supabase.createContact(this.contactForm.value);
 
     this.loading = false;
 
     if (ok) {
-
-      alert(this.translate.translate('contact.success'));
-
+      this.feedback = {
+        type: 'success',
+        message: this.translate.translate('contact.success')
+      };
       this.contactForm.reset();
-
     } else {
-
-           alert(this.translate.translate('contact.error'));
-
-
+      this.feedback = {
+        type: 'error',
+        message: this.translate.translate('contact.error')
+      };
     }
 
+    this.cdr.markForCheck();
   }
-
 }

@@ -6,5 +6,63 @@
 
 .content {
   flex: 1;
-  background: #f8fafc;
+  background: var(--color-background);
 }
+
+.content:focus {
+  outline: none;
+}
+
+
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header fixe */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Contenu */
+.content {
+  flex: 1;
+  background: var(--color-background);
+
+  /*
+   * espace réservé pour le header
+   * adapter selon la hauteur réelle de navbar
+   */
+  padding-top: 80px;
+}
+
+.content:focus {
+  outline: none;
+}
+
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+
+  background: rgba(255,255,255,0.75);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  border-bottom: 1px solid rgba(0,0,0,0.08);
+}
+
+@media (prefers-color-scheme: dark) {
+  .app-header {
+    background: rgba(15,23,42,0.75);
+    border-color: rgba(255,255,255,0.1);
+  }
+}
+

@@ -1,152 +1,198 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, ChangeDetectorRef  } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  HostListener,
+  OnInit,
+  ChangeDetectorRef,
+  ViewChild
+} from '@angular/core';
 import { TranslateService, Lang } from '../../core/services/translation.service';
 import { SupabaseService } from '../../core/services/supabase.service';
-import { RouterLink } from "@angular/router";
+import { EmptyStateComponent } from '../../shared/components/empty-state/empty-state.component';
 
 @Component({
   selector: 'app-projets',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, EmptyStateComponent],
   templateUrl: './projets.html',
-  styleUrl: './projets.scss',
+  styleUrl: './projets.scss'
 })
 export class Projets implements OnInit {
+  @ViewChild('lightboxCloseBtn') lightboxCloseBtn?: ElementRef<HTMLButtonElement>;
 
   projects: any[] = [];
   currentLang: Lang = 'ar';
   isLoading = true;
+  loadError = false;
 
-constructor(
-  public translate: TranslateService,
-  private supabaseService: SupabaseService,
+  private projectsRaw: any[] = [];
+
+  lightboxOpen = false;
+  lightboxImage = '';
+  lightboxAlt = '';
+  private lightboxTrigger: HTMLElement | null = null;
+
+  constructor(
+    public translate: TranslateService,
+    private supabaseService: SupabaseService,
     private cdr: ChangeDetectorRef
-) {
-  this.translate.lang$.subscribe(lang => {
+  ) {
+    this.translate.lang$.subscribe((lang) => {
+      this.currentLang = lang;
+      console.log("lang : ",this.currentLang)
+      console.log("prjs : ",this.projects)
+     this.translate.lang$.subscribe(lang => {
     this.currentLang = lang;
 
-    if (this.projects.length) {
-      this.mapProjects();
+    if (this.projectsRaw.length) {
+        this.mapProjects();
+        this.cdr.markForCheck();
     }
-  });
-}
-
-ngOnInit(): void {
-  this.loadProjects();
-}
-
-  // 🔥 LOAD DATA FROM SUPABASE
-async loadProjects(): Promise<void> {
-  this.isLoading = true;
-
-  const projectsRaw = await this.supabaseService.getAllProjects();
-
-  console.log("RAW FROM SUPABASE:", projectsRaw);
-
-  this.projects = projectsRaw || [];
-
-  console.log("AFTER ASSIGN:", this.projects);
-
-  this.mapProjects();
-
-
-  console.log("AFTER MAP:", this.projects);
-
-  this.isLoading = false;
-
-  this.cdr.detectChanges();
-
-
-}
-
-  // 🔥 MAP DATA FOR UI + i18n
-  private mapProjects(): void {
-    this.projects = this.projects.map(p => ({
-      id: p.id,
-      featured: p.featured,
-
-      github_url : p.github_url,
-
-      title: p.title_i18n?.[this.currentLang]
-          || p.title_i18n?.en
-          || p.title_i18n?.fr,
-
-      description: p.description_i18n?.[this.currentLang]
-          || p.description_i18n?.en
-          || p.description_i18n?.fr,
-
-      images: p.project_images || [],
-
-      technologies: (p.project_technologies || []).map((t: any) => ({
-        name: t.technologies?.name
-      }))
-    }));
+});
+    });
   }
 
-  // 🔥 MAIN IMAGE HELPER
+  ngOnInit(): void {
+    this.loadProjects();
+  }
+
+  retryLoad(): void {
+    this.loadProjects();
+  }
+
+  async loadProjects(): Promise<void> {
+    this.isLoading = true;
+    this.loadError = false;
+
+    try {
+    const projects = await this.supabaseService.getAllProjects();
+
+this.projectsRaw = projects ?? [];
+this.mapProjects();
+
+      if (!this.projectsRaw) {
+        this.loadError = true;
+      }
+    } catch {
+      this.loadError = true;
+    } finally {
+      this.isLoading = false;
+      this.cdr.detectChanges();
+    }
+  }
+
+private mapProjects(): void {
+  this.projects = this.projectsRaw.map((p) => ({
+    id: p.id,
+    featured: p.featured,
+    github_url: p.github_url,
+
+    title:
+      p.title_i18n?.[this.currentLang] ??
+      p.title_i18n?.en ??
+      p.title_i18n?.fr,
+
+    description:
+      p.description_i18n?.[this.currentLang] ??
+      p.description_i18n?.en ??
+      p.description_i18n?.fr,
+
+    images: p.project_images ?? [],
+
+    technologies: (p.project_technologies ?? []).map((t: any) => ({
+      name: t.technologies?.name
+    }))
+  }));
+}
+
   getMainImage(project: any): string {
-    return project.images
-      ?.sort((a: any, b: any) => a.order_index - b.order_index)
-      ?.find((img: any) => img.is_main)?.image_url
-      || project.images?.[0]?.image_url
-      || 'assets/placeholder.png';
+    return (
+      project.images
+        ?.sort((a: any, b: any) => a.order_index - b.order_index)
+        ?.find((img: any) => img.is_main)?.image_url ||
+      project.images?.[0]?.image_url ||
+      '/placeholder.svg'
+    );
   }
 
+  openLightbox(project: any, event: MouseEvent) {
+    event.stopPropagation();
+    this.lightboxTrigger = event.currentTarget as HTMLElement;
+    this.lightboxImage = this.getActiveImage(project);
+    this.lightboxAlt = project.title;
+    this.lightboxOpen = true;
 
-lightboxOpen = false;
-lightboxImage = '';
-
-openLightbox(project: any, event: MouseEvent) {
-  event.stopPropagation();
-  this.lightboxImage = this.getActiveImage(project);
-  this.lightboxOpen = true;
-}
-
-closeLightbox() {
-  this.lightboxOpen = false;
-}
-
-openProject(project: any) {
-  // navigation programmatique si besoin
-}
-
-private ensureCarouselState(project: any) {
-  if (project.activeIndex === undefined) {
-    project.activeIndex = 0;
+    setTimeout(() => this.lightboxCloseBtn?.nativeElement.focus());
   }
-}
 
-getActiveImage(project: any): string {
-  this.ensureCarouselState(project);
+  closeLightbox() {
+    this.lightboxOpen = false;
+    this.lightboxTrigger?.focus();
+    this.lightboxTrigger = null;
+  }
 
-  const images = project.images || [];
-  return images.length
-    ? images[project.activeIndex].image_url
-    : 'assets/placeholder.png';
-}
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.lightboxOpen) {
+      this.closeLightbox();
+    }
+  }
 
-nextImage(project: any, event: MouseEvent) {
-  event.stopPropagation();
-  this.ensureCarouselState(project);
+  openProject(project: any) {
+    this.lightboxImage = this.getActiveImage(project);
+    this.lightboxAlt = project.title;
+    this.lightboxOpen = true;
+    setTimeout(() => this.lightboxCloseBtn?.nativeElement.focus());
+  }
 
-  project.activeIndex =
-    (project.activeIndex + 1) % project.images.length;
-}
+  private ensureCarouselState(project: any) {
+    if (project.activeIndex === undefined) {
+      project.activeIndex = 0;
+    }
+  }
 
-prevImage(project: any, event: MouseEvent) {
-  event.stopPropagation();
-  this.ensureCarouselState(project);
+  getActiveImage(project: any): string {
+    this.ensureCarouselState(project);
 
-  project.activeIndex =
-    (project.activeIndex - 1 + project.images.length) %
-    project.images.length;
-}
+    const images = project.images || [];
+    return images.length ? images[project.activeIndex].image_url : '/placeholder.svg';
+  }
 
-/* Détection mobile screenshot */
-isMobileImage(url: string): boolean {
-  return url?.includes('mobile')
-    || url?.includes('screenshot')
-    || url?.includes('app');
-}
+  getImageAlt(project: any): string {
+    const index = project.activeIndex ?? 0;
+    return `${project.title} — ${index + 1}/${project.images?.length || 1}`;
+  }
 
+  nextImage(project: any, event: MouseEvent) {
+    event.stopPropagation();
+    this.ensureCarouselState(project);
+
+    if (!project.images?.length) {
+      return;
+    }
+
+    project.activeIndex = (project.activeIndex + 1) % project.images.length;
+  }
+
+  prevImage(project: any, event: MouseEvent) {
+    event.stopPropagation();
+    this.ensureCarouselState(project);
+
+    if (!project.images?.length) {
+      return;
+    }
+
+    project.activeIndex =
+      (project.activeIndex - 1 + project.images.length) % project.images.length;
+  }
+
+  goToImage(project: any, index: number, event: MouseEvent) {
+    event.stopPropagation();
+    project.activeIndex = index;
+  }
+
+  isMobileImage(url: string): boolean {
+    return url?.includes('mobile') || url?.includes('screenshot') || url?.includes('app');
+  }
 }

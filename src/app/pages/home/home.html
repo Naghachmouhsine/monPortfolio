@@ -1,101 +1,110 @@
-﻿<!-- GLOBAL LOADER -->
-<div class="global-loader" *ngIf="!isReady">
-  <div class="spinner"></div>
-  <p>Loading...</p>
-</div>
+﻿@if (isLoading) {
+  <div class="home-skeleton section-shell" aria-busy="true" aria-live="polite">
+    <div class="skeleton-block home-skeleton__hero"></div>
+    <div class="skeleton-grid">
+      @for (i of [1, 2, 3]; track i) {
+        <div class="skeleton-block home-skeleton__card"></div>
+      }
+    </div>
+    <p class="visually-hidden">{{ translate.translate('COMMON.LOADING') }}</p>
+  </div>
+}
 
+@if (loadError && !isLoading) {
+  <div class="section-shell home-state">
+    <app-empty-state
+      variant="error"
+      [title]="translate.translate('HOME.ERROR_TITLE')"
+      [message]="translate.translate('HOME.ERROR_MESSAGE')"
+      [actionLabel]="translate.translate('COMMON.RETRY')"
+      (action)="retryLoad()"
+    />
+  </div>
+}
 
-<div class="home" *ngIf="isReady">
-  <section class="hero section-shell">
-    <div class="hero-content">
+@if (isReady) {
+  <div class="home">
+    <section class="hero section-shell">
+      <div class="hero-content">
+        <p class="eyebrow">{{ siteSettings.role }}</p>
+        <h1>{{ siteSettings.full_name }}</h1>
+        <p class="hero-copy">{{ siteSettings.bio_short }}</p>
 
-<p class="eyebrow">
-  {{ siteSettings.role }}
-</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary btn-block-mobile" [routerLink]="['/contact']">
+            {{ translate.translate('HOME.CTA_CONTACT') }}
+          </a>
+          <a class="btn btn-secondary btn-block-mobile" [routerLink]="['/projects']">
+            {{ translate.translate('HOME.CTA_PROJECTS') }}
+          </a>
+        </div>
+      </div>
+    </section>
 
-<h1>
-  {{ siteSettings.full_name}}
-</h1>
+    <section class="section-shell section-block" id="services">
+      <div class="section-heading">
+        <span class="eyebrow">{{ translate.translate('HOME.SERVICES_TITLE') }}</span>
+        <h2>{{ translate.translate('HOME.SERVICES_SUBTITLE') }}</h2>
+      </div>
 
-<p class="hero-copy">
-  {{ siteSettings.bio_short}}
-</p>
+      @if (services.length) {
+        <div class="services-grid">
+          @for (service of services; track service.id) {
+            <article class="portfolio-card service-card">
+              <div class="service-icon" aria-hidden="true">
+                @if (icons[service.icon]) {
+                  <lucide-icon [img]="icons[service.icon]"></lucide-icon>
+                }
+              </div>
+              <h3>{{ service.title }}</h3>
+              <p>{{ service.description }}</p>
+            </article>
+          }
+        </div>
+      } @else {
+        <app-empty-state
+          [title]="translate.translate('HOME.SERVICES_TITLE')"
+          [message]="translate.translate('HOME.EMPTY_SERVICES')"
+        />
+      }
+    </section>
 
-
-      <div class="hero-actions">
-        <a class="btn btn-primary" [routerLink]="['/contact']">
-          {{ translate.translate('HOME.CTA_CONTACT') }}
-        </a>
-        <a class="btn btn-secondary"  [routerLink]="['/projects']">
-          {{ translate.translate('HOME.CTA_PROJECTS') }}
+    <section class="projects-section section-shell">
+      <div class="section-header">
+        <h2>{{ translate.translate('PROJECTS.TITLE') }}</h2>
+        <a routerLink="/projects" class="link-btn">
+          {{ translate.translate('PROJECTS.VIEW_ALL') }}
+          <span class="arrow" aria-hidden="true">→</span>
         </a>
       </div>
-    </div>
-  </section>
 
-  <section class="section-shell section-block" id="services">
-    <div class="section-heading">
-      <span>{{ translate.translate('HOME.SERVICES_TITLE') }}</span>
-      <h2>{{ translate.translate('HOME.SERVICES_SUBTITLE') }}</h2>
-    </div>
+      @if (projects.length) {
+        <div class="projects-grid">
+          @for (project of projects; track project.id) {
+            <article class="portfolio-card project-card">
+              <h3>{{ project.title }}</h3>
+              <p>{{ project.description }}</p>
+            </article>
+          }
+        </div>
+      } @else {
+        <app-empty-state
+          [title]="translate.translate('PROJECTS.TITLE')"
+          [message]="translate.translate('HOME.EMPTY_PROJECTS')"
+        />
+      }
+    </section>
 
-    <div class="services-grid" *ngIf="services.length; else emptyServices">
-      <article class="portfolio-card service-card" *ngFor="let service of services">
-       <div class="service-icon">
-<lucide-icon   *ngIf="icons[service.icon]" [img]="icons[service.icon]"></lucide-icon>
-</div>
-       <h3>{{ service.title}}</h3>
+    <section class="contact-cta section-shell" id="contact">
+      <div>
+        <span class="eyebrow">{{ translate.translate('NAV.CONTACT') }}</span>
+        <h2>{{ translate.translate('HOME.CTA_TITLE') }}</h2>
+        <p>{{ translate.translate('HOME.CTA_TEXT') }}</p>
+      </div>
 
-<p>{{ service.description}}</p>
-      </article>
-    </div>
-
-    <ng-template #emptyServices>
-      <p class="empty-state">{{ translate.translate('HOME.EMPTY_SERVICES') }}</p>
-    </ng-template>
-  </section>
-
- <div class="projects-section">
-
-  <div class="section-header">
-    <h2>{{ translate.translate('PROJECTS.TITLE') }}</h2>
-
-    <a routerLink="/projects" class="view-all-btn">
-      {{ translate.translate('PROJECTS.VIEW_ALL') }}
-    </a>
+      <a class="btn btn-light btn-block-mobile" [routerLink]="['/contact']">
+        {{ translate.translate('HOME.CTA_CONTACT') }}
+      </a>
+    </section>
   </div>
-
-  <div class="projects-grid" *ngIf="projects.length; else emptyProjects">
-
-    <article class="portfolio-card project-card"
-             *ngFor="let project of projects">
-
-      <h3>{{ project.title }}</h3>
-
-      <p>{{ project.description }}</p>
-<!-- <button class="details-btn" [routerLink]="['/projects', project.id]">
-  {{ translate.translate('COMMON.DETAILS') }}
-  <span class="arrow">→</span>
-</button> -->
-
-    </article>
-
-  </div>
-
-</div>
-
-<ng-template #emptyProjects>
-  <p>Aucun projet disponible</p>
-</ng-template>
-  <section class="contact-cta section-shell" id="contact">
-    <div>
-      <span>{{ translate.translate('NAV.CONTACT') }}</span>
-      <h2>{{ translate.translate('HOME.CTA_TITLE') }}</h2>
-      <p>{{ translate.translate('HOME.CTA_TEXT') }}</p>
-    </div>
-
-    <a class="btn btn-light" [routerLink]="['/contact']">
-      {{ translate.translate('HOME.CTA_CONTACT') }}
-    </a>
-  </section>
-</div>
+}
