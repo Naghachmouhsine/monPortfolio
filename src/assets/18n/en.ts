@@ -16,6 +16,18 @@ export const EN_TRANSLATIONS = {
     GITHUB: 'GitHub'
   },
 
+   SERVICES: {
+    TITLE: 'Services',
+    SUBTITLE: 'Discover the solutions and services I offer to help you achieve your goals.',
+
+    ERROR_TITLE: 'Unable to load services',
+    ERROR_MESSAGE: 'An error occurred while loading services. Please try again later.',
+
+    EMPTY_TITLE: 'No services available',
+    EMPTY_MESSAGE: 'There are currently no services to display.',
+     REQUEST:"Request this service"
+  },
+
   HOME: {
     CTA_CONTACT: 'Contact me',
     CTA_PROJECTS: 'View projects',

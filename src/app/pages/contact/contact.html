@@ -13,7 +13,9 @@
             <lucide-icon [img]="icons.clock"></lucide-icon>
           </div>
           <div>
-            <h2 class="info-card__title">{{ translate.translate('contact.features.response.title') }}</h2>
+            <h2 class="info-card__title">
+              {{ translate.translate('contact.features.response.title') }}
+            </h2>
             <p>{{ translate.translate('contact.features.response.description') }}</p>
           </div>
         </article>
@@ -23,7 +25,9 @@
             <lucide-icon [img]="icons.shield"></lucide-icon>
           </div>
           <div>
-            <h2 class="info-card__title">{{ translate.translate('contact.features.quote.title') }}</h2>
+            <h2 class="info-card__title">
+              {{ translate.translate('contact.features.quote.title') }}
+            </h2>
             <p>{{ translate.translate('contact.features.quote.description') }}</p>
           </div>
         </article>
@@ -33,13 +37,20 @@
             <lucide-icon [img]="icons.globe"></lucide-icon>
           </div>
           <div>
-            <h2 class="info-card__title">{{ translate.translate('contact.features.remote.title') }}</h2>
+            <h2 class="info-card__title">
+              {{ translate.translate('contact.features.remote.title') }}
+            </h2>
             <p>{{ translate.translate('contact.features.remote.description') }}</p>
           </div>
         </article>
       </div>
 
-      <form class="contact-form portfolio-card" [formGroup]="contactForm" (ngSubmit)="submit()" novalidate>
+      <form
+        class="contact-form portfolio-card"
+        [formGroup]="contactForm"
+        (ngSubmit)="submit()"
+        novalidate
+      >
         @if (feedback) {
           <div
             class="feedback-banner"
@@ -72,7 +83,9 @@
               autocomplete="name"
             />
             @if (isInvalid('full_name')) {
-              <p class="field-error" id="full_name_error">{{ translate.translate('contact.errors.fullName') }}</p>
+              <p class="field-error" id="full_name_error">
+                {{ translate.translate('contact.errors.fullName') }}
+              </p>
             }
           </div>
 
@@ -88,7 +101,9 @@
               autocomplete="email"
             />
             @if (isInvalid('email')) {
-              <p class="field-error" id="email_error">{{ translate.translate('contact.errors.email') }}</p>
+              <p class="field-error" id="email_error">
+                {{ translate.translate('contact.errors.email') }}
+              </p>
             }
           </div>
 
@@ -105,19 +120,21 @@
 
           <div class="form-group">
             <label for="service_interest">{{ translate.translate('contact.form.service') }}</label>
-            <select
-              id="service_interest"
-              formControlName="service_interest"
-              [attr.aria-invalid]="isInvalid('service_interest')"
-              [attr.aria-describedby]="isInvalid('service_interest') ? 'service_error' : null"
-            >
-              <option value="">{{ translate.translate('contact.placeholders.service') }}</option>
-              @for (service of services; track service.title) {
-                <option [value]="service.title">{{ service.title }}</option>
+            <select formControlName="service_interest">
+              <option value="">
+                {{ translate.translate('contact.choose_service') }}
+              </option>
+
+              @for (service of services; track service.id) {
+                <option [value]="service.id">
+                  {{ service.title }}
+                </option>
               }
             </select>
             @if (isInvalid('service_interest')) {
-              <p class="field-error" id="service_error">{{ translate.translate('contact.errors.service') }}</p>
+              <p class="field-error" id="service_error">
+                {{ translate.translate('contact.errors.service') }}
+              </p>
             }
           </div>
         </div>
@@ -144,13 +161,17 @@
             [attr.aria-describedby]="isInvalid('message') ? 'message_error' : null"
           ></textarea>
           @if (isInvalid('message')) {
-            <p class="field-error" id="message_error">{{ translate.translate('contact.errors.message') }}</p>
+            <p class="field-error" id="message_error">
+              {{ translate.translate('contact.errors.message') }}
+            </p>
           }
         </div>
 
         <button class="btn btn-primary btn-block submit-btn" type="submit" [disabled]="loading">
           <lucide-icon [img]="icons.send" aria-hidden="true"></lucide-icon>
-          {{ loading ? translate.translate('contact.sending') : translate.translate('contact.send') }}
+          {{
+            loading ? translate.translate('contact.sending') : translate.translate('contact.send')
+          }}
         </button>
       </form>
     </div>

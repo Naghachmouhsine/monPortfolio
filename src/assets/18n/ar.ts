@@ -41,6 +41,18 @@ export const AR_TRANSLATIONS = {
     LIGHTBOX_LABEL: 'معاينة صورة المشروع'
   },
 
+  SERVICES: {
+    TITLE: 'الخدمات',
+    SUBTITLE: 'اكتشف الحلول والخدمات التي أقدمها لمساعدتك على تحقيق أهدافك وإنجاز مشاريعك.',
+
+    ERROR_TITLE: 'تعذر تحميل الخدمات',
+    ERROR_MESSAGE: 'حدث خطأ أثناء تحميل الخدمات. يرجى المحاولة مرة أخرى لاحقاً.',
+
+    EMPTY_TITLE: 'لا توجد خدمات متاحة',
+    EMPTY_MESSAGE: 'لا توجد خدمات لعرضها حالياً.',
+     REQUEST:"طلب هذه الخدمة"
+  },
+
   PRIVATE_PROJECT: 'مشروع خاص',
 
   contact: {

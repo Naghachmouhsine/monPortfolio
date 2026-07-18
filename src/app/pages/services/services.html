@@ -1,0 +1,164 @@
+@if (isLoading) {
+
+  <div class="services-skeleton section-shell"
+       aria-busy="true"
+       aria-live="polite">
+
+    <div class="skeleton-block services-skeleton__header"></div>
+
+    <div class="skeleton-grid">
+      @for (i of [1,2,3,4,5,6]; track i) {
+        <div class="skeleton-block services-skeleton__card"></div>
+      }
+    </div>
+
+    <p class="visually-hidden">
+      {{ translate.translate('COMMON.LOADING') }}
+    </p>
+
+  </div>
+
+}
+
+
+@if (loadError && !isLoading) {
+
+  <div class="section-shell services-state">
+
+    <app-empty-state
+      variant="error"
+      [title]="translate.translate('SERVICES.ERROR_TITLE')"
+      [message]="translate.translate('SERVICES.ERROR_MESSAGE')"
+      [actionLabel]="translate.translate('COMMON.RETRY')"
+      (action)="retryLoad()"
+    />
+
+  </div>
+
+}
+
+
+@if (!isLoading && !loadError) {
+
+  <div class="services-page">
+
+    <div class="section-shell">
+
+
+      <header class="page-header">
+
+        <span class="badge badge--soft">
+          {{ translate.translate('SERVICES.TITLE') }}
+        </span>
+
+
+        <h1>
+          {{ translate.translate('SERVICES.TITLE') }}
+        </h1>
+
+
+        <p class="page-subtitle">
+          {{ translate.translate('SERVICES.SUBTITLE') }}
+        </p>
+
+      </header>
+
+
+
+      @if (services.length) {
+
+
+        <div class="services-grid">
+
+
+          @for (service of services; track service.id) {
+
+
+            <article class="portfolio-card service-card">
+
+
+              <div class="service-icon">
+
+                @if (icons[service.icon]) {
+
+                  <lucide-icon
+                    [img]="icons[service.icon]"
+                    size="32">
+                  </lucide-icon>
+
+                }
+
+              </div>
+
+
+
+              <div class="service-content">
+
+
+                <h3>
+                  {{ service.title }}
+                </h3>
+
+
+                <p>
+                  {{ service.description }}
+                </p>
+
+
+              </div>
+
+
+
+
+              <button
+                type="button"
+                class="service-action"
+                (click)="requestService(service.id)">
+
+
+                <span>
+                  {{ translate.translate('SERVICES.REQUEST') }}
+                </span>
+
+
+                <lucide-icon
+                  [img]="icons['send']"
+                  size="16">
+                </lucide-icon>
+
+
+              </button>
+
+
+
+            </article>
+
+
+          }
+
+
+        </div>
+
+
+
+      } @else {
+
+
+        <app-empty-state
+
+          [title]="translate.translate('SERVICES.EMPTY_TITLE')"
+
+          [message]="translate.translate('SERVICES.EMPTY_MESSAGE')"
+
+        />
+
+
+      }
+
+
+
+    </div>
+
+  </div>
+
+}

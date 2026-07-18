@@ -41,6 +41,18 @@ export const FR_TRANSLATIONS = {
     LIGHTBOX_LABEL: 'Aperçu de l’image du projet'
   },
 
+   SERVICES: {
+    TITLE: 'Services',
+    SUBTITLE: 'Découvrez les solutions et services que je propose pour vous accompagner dans vos projets.',
+
+    ERROR_TITLE: 'Impossible de charger les services',
+    ERROR_MESSAGE: 'Une erreur est survenue lors du chargement des services. Veuillez réessayer plus tard.',
+
+    EMPTY_TITLE: 'Aucun service disponible',
+    EMPTY_MESSAGE: 'Aucun service n’est actuellement disponible.',
+     REQUEST:"Demander ce service"
+  },
+
   PRIVATE_PROJECT: 'Projet privé',
 
   contact: {

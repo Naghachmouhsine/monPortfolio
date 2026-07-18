@@ -4,12 +4,13 @@ import { SupabaseService } from '../../core/services/supabase.service';
 import { Lang, TranslateService } from '../../core/services/translation.service';
 import { CommonModule } from '@angular/common';
 import { LucideAngularModule, Clock, ShieldCheck, Globe, Send } from 'lucide-angular';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-contact',
   imports: [ReactiveFormsModule, CommonModule, LucideAngularModule],
   templateUrl: './contact.html',
-  styleUrl: './contact.scss'
+  styleUrl: './contact.scss',
 })
 export class ContactComponent implements OnInit {
   loading = false;
@@ -24,14 +25,15 @@ export class ContactComponent implements OnInit {
     clock: Clock,
     shield: ShieldCheck,
     globe: Globe,
-    send: Send
+    send: Send,
   };
 
   constructor(
     private fb: FormBuilder,
     private supabase: SupabaseService,
     public translate: TranslateService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
   ) {
     this.translate.lang$.subscribe((lang) => {
       this.currentLang = lang;
@@ -46,13 +48,24 @@ export class ContactComponent implements OnInit {
       phone: [''],
       service_interest: ['', Validators.required],
       subject: [''],
-      message: ['', Validators.required]
+      message: ['', Validators.required],
     });
   }
 
   async ngOnInit() {
     this.initForm();
+
     await this.loadServices();
+
+    this.route.queryParams.subscribe((params) => {
+      const serviceId = params['idService'];
+
+      if (serviceId) {
+        this.contactForm.patchValue({
+          service_interest: serviceId,
+        });
+      }
+    });
   }
 
   async loadServices() {
@@ -60,13 +73,19 @@ export class ContactComponent implements OnInit {
     this.reloadTranslations();
   }
 
-  private reloadTranslations() {
-    this.services = this.servicesRaw.map((s) => ({
-      title: s.title_i18n?.[this.currentLang]
-    }));
+ private reloadTranslations(){
 
-    this.cdr.markForCheck();
-  }
+ this.services = this.servicesRaw.map((s)=>({
+
+    id:s.id,
+
+    title:s.title_i18n?.[this.currentLang]
+
+ }));
+
+ this.cdr.markForCheck();
+
+}
 
   isInvalid(controlName: string): boolean {
     const control = this.contactForm.get(controlName);
@@ -94,13 +113,13 @@ export class ContactComponent implements OnInit {
     if (ok) {
       this.feedback = {
         type: 'success',
-        message: this.translate.translate('contact.success')
+        message: this.translate.translate('contact.success'),
       };
       this.contactForm.reset();
     } else {
       this.feedback = {
         type: 'error',
-        message: this.translate.translate('contact.error')
+        message: this.translate.translate('contact.error'),
       };
     }
 
