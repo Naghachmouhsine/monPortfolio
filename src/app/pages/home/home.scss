@@ -148,6 +148,7 @@
   .eyebrow {
     font-weight: 800;
     opacity: 0.82;
+    // color: rgb(4, 97, 246);
   }
 
   h2 {
@@ -190,6 +191,19 @@
   white-space: nowrap;
   border: 0;
 }
+
+.services-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.projects-grid {
+  display: grid;
+  gap: var(--space-5);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 
 @media (max-width: 1024px) {
   .services-grid,

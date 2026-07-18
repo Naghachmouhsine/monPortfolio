@@ -44,7 +44,7 @@
     <section class="section-shell section-block" id="services">
       <div class="section-heading">
         <span class="eyebrow">{{ translate.translate('HOME.SERVICES_TITLE') }}</span>
-        <h2>{{ translate.translate('HOME.SERVICES_SUBTITLE') }}</h2>
+        <h3>{{ translate.translate('HOME.SERVICES_SUBTITLE') }}</h3>
       </div>
 
       @if (services.length) {
@@ -71,7 +71,17 @@
 
     <section class="projects-section section-shell">
       <div class="section-header">
-        <h2>{{ translate.translate('PROJECTS.TITLE') }}</h2>
+        <span
+          style="
+            color: #2563eb;
+            font-size: 0.9rem;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+          "
+          class="eyebrow"
+          >{{ translate.translate('PROJECTS.TITLE') }}</span
+        >
         <a routerLink="/projects" class="link-btn">
           {{ translate.translate('PROJECTS.VIEW_ALL') }}
           <span class="arrow" aria-hidden="true">→</span>

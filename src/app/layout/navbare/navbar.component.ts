@@ -20,8 +20,9 @@ import { Lang, TranslateService } from '../../core/services/translation.service'
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  @ViewChild('navPanel') navPanel?: ElementRef<HTMLElement>;
 
+@ViewChild('navPanel') navPanel?: ElementRef<HTMLElement>;
+@ViewChild('actions') actions?: ElementRef<HTMLElement>;
   isMenuOpen = false;
   lang: Lang = 'ar';
   logoName = '';
@@ -66,19 +67,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
     }
   }
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.isMenuOpen) {
-      return;
-    }
-
-    const target = event.target as Node;
-    const nav = this.navPanel?.nativeElement;
-
-    if (nav && !nav.contains(target)) {
-      this.closeMenu();
-    }
+@HostListener('document:click', ['$event'])
+onDocumentClick(event: MouseEvent): void {
+  if (!this.isMenuOpen) {
+    return;
   }
+
+  const target = event.target as Node;
+
+  const nav = this.navPanel?.nativeElement;
+  const actions = this.actions?.nativeElement;
+
+  if (
+    nav &&
+    !nav.contains(target) &&
+    actions &&
+    !actions.contains(target)
+  ) {
+    this.closeMenu();
+  }
+}
 
   toggleMenu(): void {
     this.isMenuOpen = !this.isMenuOpen;

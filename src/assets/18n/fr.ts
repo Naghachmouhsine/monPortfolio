@@ -30,7 +30,7 @@ export const FR_TRANSLATIONS = {
   },
 
   PROJECTS: {
-    TITLE: 'Projets',
+    TITLE: 'Mes Projets',
     VIEW_ALL: 'Voir tout',
     FEATURED: 'En vedette',
     IMAGES: 'images',
